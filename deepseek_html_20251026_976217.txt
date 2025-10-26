@@ -1,0 +1,2962 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>君宇实验小学部派课安排</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: cover;
+        }
+        
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card i {
+            font-size: 36px;
+            margin-bottom: 15px;
+            color: #3498db;
+        }
+        
+        .card h3 {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+        
+        .card .value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .sync-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        
+        .sync-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #e74c3c;
+        }
+        
+        .sync-indicator.synced {
+            background: #2ecc71;
+        }
+        
+        .sync-indicator.syncing {
+            background: #f39c12;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .controls {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eaeaea;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .date-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .date-slider-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .date-slider {
+            flex: 1;
+            height: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #ddd;
+            border-radius: 4px;
+            outline: none;
+        }
+        
+        .date-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .date-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .date-display {
+            min-width: 150px;
+            text-align: center;
+            font-weight: bold;
+            color: #2c3e50;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .search-box input:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+        
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-select {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            font-size: 14px;
+            min-width: 150px;
+            transition: all 0.3s;
+        }
+        
+        .filter-select:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #ecf0f1;
+            color: #333;
+        }
+        
+        .btn-success {
+            background: #2ecc71;
+            color: white;
+        }
+        
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #7f8c8d;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab.active {
+            color: #3498db;
+            border-bottom: 3px solid #3498db;
+            background: white;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 20px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            padding: 0 20px 20px;
+            min-height: 400px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            min-width: 900px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        th {
+            background: #2c3e50;
+            color: white;
+            font-weight: 600;
+            text-align: left;
+            padding: 15px;
+            position: sticky;
+            top: 0;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        tr:hover {
+            background: #e3f2fd;
+        }
+        
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: #777;
+            font-style: italic;
+        }
+        
+        .date-selector, .weekday-selector, .class-selector, .period-selector, .teacher-selector, .assign-teacher-selector {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px 8px;
+            font-size: 14px;
+            width: 100%;
+        }
+        
+        .teacher-selector {
+            background-color: #f9f9f9;
+        }
+        
+        .teacher-selector:disabled {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .status-selector {
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-completed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .status-in-progress {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .special-course-indicator {
+            font-size: 11px;
+            color: #e74c3c;
+            font-style: italic;
+            margin-top: 2px;
+        }
+        
+        .conflict-warning {
+            font-size: 11px;
+            color: #e74c3c;
+            font-weight: bold;
+            margin-top: 2px;
+        }
+        
+        .settings-panel {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .settings-title {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eaeaea;
+            padding-bottom: 10px;
+        }
+        
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px 0;
+        }
+        
+        .setting-label {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        
+        .setting-description {
+            font-size: 12px;
+            color: #95a5a6;
+            margin-top: 5px;
+        }
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #3498db;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .sync-history {
+            margin-top: 20px;
+        }
+        
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-time {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        
+        .history-status {
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .conflict-resolution {
+            margin-top: 20px;
+            border: 1px solid #eaeaea;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .conflict-header {
+            background: #f8f9fa;
+            padding: 15px;
+            font-weight: bold;
+            color: #e74c3c;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .conflict-item {
+            padding: 15px;
+            border-bottom: 1px solid #eaeaea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .conflict-item:last-child {
+            border-bottom: none;
+        }
+        
+        .conflict-info {
+            flex: 1;
+        }
+        
+        .conflict-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .conflict-course {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .conflict-details {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 14px;
+            border-top: 1px solid #eaeaea;
+            background: #f8f9fa;
+        }
+        
+        /* 特效样式 */
+        .celebration-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .celebration-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 90%;
+            animation: zoomIn 0.5s ease-out;
+        }
+        
+        .celebration-icon {
+            font-size: 80px;
+            color: #f1c40f;
+            margin-bottom: 20px;
+            animation: bounce 1s infinite alternate;
+        }
+        
+        .celebration-title {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .celebration-message {
+            font-size: 18px;
+            color: #7f8c8d;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        
+        .teacher-name {
+            font-weight: bold;
+            color: #3498db;
+            font-size: 20px;
+        }
+        
+        .confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        
+        .sparkle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f1c40f;
+            border-radius: 50%;
+            box-shadow: 0 0 10px 2px #f1c40f;
+            animation: sparkle 1.5s infinite alternate;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-20px); }
+        }
+        
+        @keyframes sparkle {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .date-controls {
+                min-width: 100%;
+            }
+            
+            .search-box {
+                min-width: 100%;
+            }
+            
+            .filter-group {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .action-buttons {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .btn {
+                flex: 1;
+                text-align: center;
+            }
+            
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .setting-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .switch {
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>君宇实验小学部派课安排</h1>
+            <div class="subtitle">2025-2026学年派课管理系统 - 多设备数据同步</div>
+        </header>
+        
+        <div class="dashboard">
+            <div class="card">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <h3>总教师数</h3>
+                <div class="value" id="totalTeachers">85</div>
+                <div class="sync-status">
+                    <div class="sync-indicator synced"></div>
+                    <span>已同步</span>
+                </div>
+            </div>
+            <div class="card">
+                <i class="fas fa-users"></i>
+                <h3>总班级数</h3>
+                <div class="value" id="totalClasses">24</div>
+                <div class="sync-status">
+                    <div class="sync-indicator synced"></div>
+                    <span>已同步</span>
+                </div>
+            </div>
+            <div class="card">
+                <i class="fas fa-book"></i>
+                <h3>今日课程</h3>
+                <div class="value" id="todayCourses">0</div>
+                <div class="sync-status">
+                    <div class="sync-indicator synced"></div>
+                    <span>已同步</span>
+                </div>
+            </div>
+            <div class="card">
+                <i class="fas fa-sync-alt"></i>
+                <h3>最后同步时间</h3>
+                <div class="value" id="lastSyncTime">刚刚</div>
+                <div class="sync-status">
+                    <div class="sync-indicator syncing"></div>
+                    <span>同步中</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="date-controls">
+                <div class="date-slider-container">
+                    <span>1月1日</span>
+                    <input type="range" min="1" max="365" value="1" class="date-slider" id="dateSlider">
+                    <span>12月31日</span>
+                </div>
+                <div class="date-display" id="dateDisplay">1月1日 星期一</div>
+            </div>
+            
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="搜索教师、班级...">
+            </div>
+            
+            <div class="filter-group">
+                <select class="filter-select" id="classFilter">
+                    <option value="">所有班级</option>
+                </select>
+                
+                <select class="filter-select" id="teacherFilter">
+                    <option value="">所有教师</option>
+                </select>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="addCourseBtn">
+                    <i class="fas fa-plus"></i> 添加课程
+                </button>
+                <button class="btn btn-success" id="assignAllBtn">
+                    <i class="fas fa-tasks"></i> 批量派课
+                </button>
+                <button class="btn btn-primary" id="syncNowBtn">
+                    <i class="fas fa-sync-alt"></i> 立即同步
+                </button>
+                <button class="btn btn-secondary" id="exportBtn">
+                    <i class="fas fa-download"></i> 导出数据
+                </button>
+                <button class="btn btn-secondary" id="clearDataBtn">
+                    <i class="fas fa-trash"></i> 清空数据
+                </button>
+                <button class="btn btn-warning" id="settingsBtn">
+                    <i class="fas fa-cog"></i> 设置
+                </button>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="assignment">派课管理</div>
+            <div class="tab" data-tab="statistics">数据统计</div>
+            <div class="tab" data-tab="sync-settings">同步设置</div>
+            <div class="tab" data-tab="sync-history">同步历史</div>
+        </div>
+        
+        <div class="tab-content active" id="assignment">
+            <div class="table-container">
+                <table id="courseTable">
+                    <thead>
+                        <tr>
+                            <th>日期</th>
+                            <th>星期</th>
+                            <th>班级</th>
+                            <th>节次</th>
+                            <th>任课教师</th>
+                            <th>派课教师</th>
+                            <th>派课情况</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="empty-message-row">
+                            <td colspan="8" class="empty-message">暂无派课数据，请点击"添加课程"按钮添加新课程</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="statistics">
+            <div class="dashboard">
+                <div class="card">
+                    <i class="fas fa-trophy"></i>
+                    <h3>派课教师排名</h3>
+                    <div class="value">前5名</div>
+                    <div id="teacherAssignmentRanking" style="margin-top: 10px; font-size: 14px; text-align: left;">
+                        <!-- 派课教师排名将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+                <div class="card">
+                    <i class="fas fa-calendar-check"></i>
+                    <h3>本周派课完成率</h3>
+                    <div class="value">0%</div>
+                    <div style="margin-top: 10px; background: #ecf0f1; height: 10px; border-radius: 5px;">
+                        <div style="background: #2ecc71; width: 0%; height: 100%; border-radius: 5px;"></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>冲突检测</h3>
+                    <div class="value" style="color: #e74c3c;">0处</div>
+                    <div style="margin-top: 10px; font-size: 14px;">
+                        暂无时间冲突
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="sync-settings">
+            <div class="settings-panel">
+                <h3 class="settings-title">同步设置</h3>
+                
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">启用自动同步</div>
+                        <div class="setting-description">开启后系统将自动在设备间同步数据</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="autoSyncToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">同步频率</div>
+                        <div class="setting-description">设置自动同步的时间间隔</div>
+                    </div>
+                    <select class="form-control" id="syncFrequency" style="width: 150px;">
+                        <option value="5">5分钟</option>
+                        <option value="15" selected>15分钟</option>
+                        <option value="30">30分钟</option>
+                        <option value="60">1小时</option>
+                    </select>
+                </div>
+                
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">WiFi同步</div>
+                        <div class="setting-description">仅在WiFi环境下进行同步以节省流量</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="wifiSyncToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">冲突解决策略</div>
+                        <div class="setting-description">设置数据冲突时的默认解决方式</div>
+                    </div>
+                    <select class="form-control" id="conflictResolution" style="width: 200px;">
+                        <option value="server">以服务器版本为准</option>
+                        <option value="client" selected>以本地版本为准</option>
+                        <option value="manual">手动解决</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="syncServerUrl">同步服务器地址</label>
+                    <input type="text" class="form-control" id="syncServerUrl" placeholder="https://api.example.com/sync" value="https://junyu-school-api.com/sync">
+                </div>
+                
+                <div class="form-group">
+                    <label for="schoolCode">学校代码</label>
+                    <input type="text" class="form-control" id="schoolCode" placeholder="请输入学校代码" value="JY2025001">
+                </div>
+                
+                <div class="form-group">
+                    <label for="deviceName">设备名称</label>
+                    <input type="text" class="form-control" id="deviceName" placeholder="请输入设备名称" value="教务处电脑">
+                </div>
+                
+                <button class="btn btn-primary" id="saveSettingsBtn">
+                    <i class="fas fa-save"></i> 保存设置
+                </button>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="sync-history">
+            <div class="settings-panel">
+                <h3 class="settings-title">同步历史</h3>
+                
+                <div class="sync-history">
+                    <div class="history-item">
+                        <div>
+                            <div class="history-time">刚刚</div>
+                            <div>自动同步完成</div>
+                        </div>
+                        <div class="history-status status-success">成功</div>
+                    </div>
+                    
+                    <div class="history-item">
+                        <div>
+                            <div class="history-time">15分钟前</div>
+                            <div>手动同步完成</div>
+                        </div>
+                        <div class="history-status status-success">成功</div>
+                    </div>
+                    
+                    <div class="history-item">
+                        <div>
+                            <div class="history-time">1小时前</div>
+                            <div>检测到数据冲突</div>
+                        </div>
+                        <div class="history-status status-warning">警告</div>
+                    </div>
+                    
+                    <div class="history-item">
+                        <div>
+                            <div class="history-time">2小时前</div>
+                            <div>自动同步失败 - 网络连接错误</div>
+                        </div>
+                        <div class="history-status status-error">失败</div>
+                    </div>
+                    
+                    <div class="history-item">
+                        <div>
+                            <div class="history-time">3小时前</div>
+                            <div>自动同步完成</div>
+                        </div>
+                        <div class="history-status status-success">成功</div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-secondary" style="margin-top: 20px;">
+                    <i class="fas fa-trash"></i> 清除历史记录
+                </button>
+            </div>
+        </div>
+        
+        <footer>
+            <p>君宇实验小学部教务处 &copy; 2025 | 系统版本: 2.1.0 | 最后同步: 2025-08-29 14:30</p>
+        </footer>
+    </div>
+
+    <!-- 特效元素 -->
+    <canvas id="confettiCanvas" class="confetti-canvas"></canvas>
+
+    <!-- 课程表数据 -->
+    <script id="courseData" type="application/json">
+        {
+            "一年1班": {
+                "星期一": ["孙亚丽", "王艾峰", "褚晓旭", "杨文纲", "杨晶", "班/安", "王艾峰", "孙亚丽"],
+                "星期二": ["王艾峰", "孙亚丽", "杨晶", "杨文纲", "王艾峰", "张琦", "孙亚丽", "王艾峰"],
+                "星期三": ["孙亚丽", "王艾峰", "李艳荟", "王艾峰", "张琦", "王艾峰", "杨文纲", "孙亚丽"],
+                "星期四": ["王艾峰", "孙亚丽", "王艾峰", "褚晓旭", "孙亚丽", "李静", "王艾峰", "杨文纲"],
+                "星期五": ["孙亚丽", "王艾峰", "张琦", "李艳荟", "杨晶", "杨文纲", "王艾峰", "孙亚丽"]
+            },
+            "一年2班": {
+                "星期一": ["段美琳", "索蓓蓓", "杨晶", "索蓓蓓", "张琦", "班/安", "段美琳", "杨文纲"],
+                "星期二": ["索蓓蓓", "段美琳", "褚晓旭", "李艳荟", "索蓓蓓", "杨文纲", "索蓓蓓", "段美琳"],
+                "星期三": ["索蓓蓓", "段美琳", "杨文纲", "李静", "杨晶", "索蓓蓓", "段美琳", "索蓓蓓"],
+                "星期四": ["索蓓蓓", "段美琳", "李艳荟", "张琦", "杨晶", "杨文纲", "索蓓蓓", "段美琳"],
+                "星期五": ["段美琳", "索蓓蓓", "褚晓旭", "张琦", "索蓓蓓", "段美琳", "杨文纲", "索蓓蓓"]
+            },
+            "一年3班": {
+                "星期一": ["高云云", "孙亚丽", "李静", "杨晶", "任红红", "班/安", "孙亚丽", "高云云"],
+                "星期二": ["孙亚丽", "高云云", "张琦", "杨晶", "褚晓旭", "孙亚丽", "高云云", "任红红"],
+                "星期三": ["高云云", "孙亚丽", "张琦", "李艳荟", "任红红", "高云云", "孙亚丽", "高云云"],
+                "星期四": ["孙亚丽", "高云云", "杨晶", "高云云", "任红红", "李艳荟", "高云云", "孙亚丽"],
+                "星期五": ["高云云", "孙亚丽", "高云云", "褚晓旭", "高云云", "张琦", "孙亚丽", "任红红"]
+            },
+            "一年4班": {
+                "星期一": ["尤文爱", "段美琳", "张琦", "尤文爱", "李艳荟", "班/安", "任红红", "段美琳"],
+                "星期二": ["段美琳", "尤文爱", "段美琳", "尤文爱", "杨晶", "褚晓旭", "任红红", "尤文爱"],
+                "星期三": ["段美琳", "尤文爱", "任红红", "杨晶", "尤文爱", "张琦", "尤文爱", "段美琳"],
+                "星期四": ["段美琳", "尤文爱", "李静", "任红红", "褚晓旭", "杨晶", "段美琳", "尤文爱"],
+                "星期五": ["尤文爱", "段美琳", "尤文爱", "任红红", "张琦", "李艳荟", "尤文爱", "段美琳"]
+            },
+            "二年1班": {
+                "星期一": ["段晶晶", "白灵烨", "郝伟艳", "牛文涛", "刘旭峰", "班/安", "白灵烨", "段晶晶"],
+                "星期二": ["白灵烨", "段晶晶", "任红红", "牛文涛", "段晶晶", "白灵烨", "社团", ""],
+                "星期三": ["段晶晶", "白灵烨", "段晶晶", "刘旭峰", "聂倩", "郝伟艳", "阅读", "白灵烨"],
+                "星期四": ["白灵烨", "段晶晶", "赵秀秀", "聂倩", "段鹏华", "牛文涛", "段晶晶", "刘旭峰"],
+                "星期五": ["段晶晶", "白灵烨", "牛文涛", "刘旭峰", "段晶晶", "赵秀秀", "白灵烨", "段晶晶"]
+            },
+            "二年2班": {
+                "星期一": ["尹星", "冯丽芳", "牛文涛", "刘旭峰", "聂倩", "班/安", "尹星", "阅读"],
+                "星期二": ["冯丽芳", "尹星", "牛文涛", "刘旭峰", "冯丽芳", "段鹏华", "社团", ""],
+                "星期三": ["尹星", "冯丽芳", "牛文涛", "赵秀秀", "郝伟艳", "任红红", "冯丽芳", "尹星"],
+                "星期四": ["冯丽芳", "尹星", "冯丽芳", "刘旭峰", "赵秀秀", "郝伟艳", "尹星", "冯丽芳"],
+                "星期五": ["尹星", "冯丽芳", "聂倩", "牛文涛", "冯丽芳", "尹星", "冯丽芳", "刘旭峰"]
+            },
+            "二年3班": {
+                "星期一": ["董旭琴", "尹星", "刘旭峰", "董旭琴", "赵秀秀", "班/安", "董旭琴", "尹星"],
+                "星期二": ["尹星", "牛文涛", "董旭琴", "赵秀秀", "任红红", "聂倩", "社团", ""],
+                "星期三": ["董旭琴", "尹星", "郝伟艳", "董旭琴", "刘旭峰", "牛文涛", "尹星", "董旭琴"],
+                "星期四": ["尹星", "董旭琴", "郝伟艳", "牛文涛", "聂倩", "尹星", "刘旭峰", "阅读"],
+                "星期五": ["董旭琴", "尹星", "段鹏华", "董旭琴", "牛文涛", "刘旭峰", "董旭琴", "尹星"]
+            },
+            "二年4班": {
+                "星期一": ["白灵烨", "高楠", "高楠", "赵秀秀", "牛文涛", "班/安", "高楠", "刘旭峰"],
+                "星期二": ["高楠", "白灵烨", "赵秀秀", "郝伟艳", "刘旭峰", "高楠", "社团", ""],
+                "星期三": ["白灵烨", "牛文涛", "高楠", "聂倩", "段鹏华", "刘旭峰", "白灵烨", "高楠"],
+                "星期四": ["高楠", "白灵烨", "刘旭峰", "高楠", "牛文涛", "聂倩", "白灵烨", "高楠"],
+                "星期五": ["白灵烨", "高楠", "郝伟艳", "白灵烨", "任红红", "牛文涛", "阅读", "白灵烨"]
+            },
+            "三年1班": {
+                "星期一": ["刘晓艳", "杨娅娜", "王海霞", "王小露", "高杰存", "班/安", "杨娅娜", "刘晓艳"],
+                "星期二": ["杨娅娜", "刘晓艳", "郝亚丽", "褚晓旭", "王红艳", "李云云", "社团", ""],
+                "星期三": ["王红艳", "杨娅娜", "刘晓艳", "郝亚丽", "李云云", "李静", "康绍芳", "刘晓艳"],
+                "星期四": ["杨娅娜", "刘晓艳", "高瑞雪", "刘晓艳", "李静", "王红艳", "郝亚丽", "杨娅娜"],
+                "星期五": ["杨娅娜", "刘晓艳", "郝亚丽", "王小露", "褚晓旭", "王红艳", "杨娅娜", "刘晓艳"]
+            },
+            "三年2班": {
+                "星期一": ["杨娅娜", "赵鑫慧", "王小露", "王海霞", "褚晓旭", "班/安", "康绍芳", "杨娅娜"],
+                "星期二": ["赵鑫慧", "杨娅娜", "高杰存", "王红艳", "李静", "郝亚丽", "社团", ""],
+                "星期三": ["杨娅娜", "王红艳", "赵鑫慧", "李云云", "高瑞雪", "褚晓旭", "郝亚丽", "赵鑫慧"],
+                "星期四": ["赵鑫慧", "杨娅娜", "郝亚丽", "赵鑫慧", "王红艳", "王小露", "杨娅娜", "赵鑫慧"],
+                "星期五": ["赵鑫慧", "杨娅娜", "李云云", "王红艳", "郝亚丽", "李静", "赵鑫慧", "杨娅娜"]
+            },
+            "三年3班": {
+                "星期一": ["陈飞", "韩宏丽", "郝亚丽", "李静", "王红艳", "班/安", "陈飞", "韩宏丽"],
+                "星期二": ["王红艳", "陈飞", "韩宏丽", "李静", "郝亚丽", "韩宏丽", "社团", ""],
+                "星期三": ["陈飞", "韩宏丽", "王小露", "褚晓旭", "王红艳", "高杰存", "韩宏丽", "郝亚丽"],
+                "星期四": ["韩宏丽", "陈飞", "褚晓旭", "王红艳", "李云云", "王海霞", "康绍芳", "陈飞"],
+                "星期五": ["陈飞", "韩宏丽", "高瑞雪", "李云云", "王小露", "郝亚丽", "陈飞", "韩宏丽"]
+            },
+            "三年4班": {
+                "星期一": ["郝晓林", "陈飞", "王红艳", "褚晓旭", "李云云", "班/安", "郝亚丽", "郝晓林"],
+                "星期二": ["陈飞", "郝晓林", "高瑞雪", "高杰存", "李云云", "李静", "社团", ""],
+                "星期三": ["郝晓林", "陈飞", "王红艳", "王小露", "李静", "郝亚丽", "陈飞", "郝晓林"],
+                "星期四": ["陈飞", "王红艳", "郝晓林", "郝亚丽", "王小露", "褚晓旭", "陈飞", "郝晓林"],
+                "星期五": ["郝晓林", "陈飞", "王红艳", "郝亚丽", "郝晓林", "王海霞", "康绍芳", "陈飞"]
+            },
+            "四年1班": {
+                "星期一": ["王彩娇", "武晋芳", "段鹏华", "王丽清", "刘红霞", "班/安", "温文杰", "王彩娇"],
+                "星期二": ["武晋芳", "王彩娇", "温文杰", "王小露", "刘红霞", "郝伟艳", "王彩娇", "武晋芳"],
+                "星期三": ["王彩娇", "刘红霞", "赵秀秀", "温文杰", "武晋芳", "段鹏华", "社团", ""],
+                "星期四": ["武晋芳", "王彩娇", "王海霞", "武晋芳", "王艳", "刘红霞", "武晋芳", "王彩娇"],
+                "星期五": ["武晋芳", "王彩娇", "王小露", "赵秀秀", "武晋芳", "郝伟艳", "温文杰", "武晋芳"]
+            },
+            "四年2班": {
+                "星期一": ["崔瑞宏", "李文娟", "赵秀秀", "温文杰", "段鹏华", "班/安", "李文娟", "崔瑞宏"],
+                "星期二": ["李文娟", "崔瑞宏", "段鹏华", "温文杰", "崔瑞宏", "刘红霞", "崔瑞宏", "李文娟"],
+                "星期三": ["李文娟", "崔瑞宏", "王丽清", "王海霞", "刘红霞", "王小露", "社团", ""],
+                "星期四": ["崔瑞宏", "刘红霞", "李文娟", "赵秀秀", "郝伟艳", "王艳", "李文娟", "温文杰"],
+                "星期五": ["崔瑞宏", "刘红霞", "李文娟", "郝伟艳", "崔瑞宏", "王小露", "崔瑞宏", "温文杰"]
+            },
+            "四年3班": {
+                "星期一": ["刘红霞", "王彩娇", "刘国红", "王艳", "王小露", "班/安", "王彩娇", "李应龙"],
+                "星期二": ["王彩娇", "刘国红", "刘红霞", "王丽清", "郝伟艳", "刘国红", "刘国红", "李应龙"],
+                "星期三": ["刘国红", "王彩娇", "李应龙", "郝伟艳", "赵秀秀", "刘国红", "社团", ""],
+                "星期四": ["王彩娇", "刘国红", "王小露", "王海霞", "刘红霞", "段鹏华", "王彩娇", "刘国红"],
+                "星期五": ["王彩娇", "刘国红", "赵秀秀", "段鹏华", "李应龙", "刘红霞", "刘国红", "王彩娇"]
+            },
+            "四年4班": {
+                "星期一": ["李文娟", "刘红霞", "罗海晶", "郝伟艳", "王海霞", "班/安", "罗海晶", "李文娟"],
+                "星期二": ["罗海晶", "李文娟", "王小露", "段鹏华", "赵秀秀", "罗海晶", "李应龙", "罗海晶"],
+                "星期三": ["刘红霞", "罗海晶", "李文娟", "李应龙", "王小露", "罗海晶", "社团", ""],
+                "星期四": ["李文娟", "罗海晶", "刘红霞", "郝伟艳", "王丽清", "赵秀秀", "李应龙", "李文娟"],
+                "星期五": ["李文娟", "罗海晶", "刘红霞", "王艳", "段鹏华", "罗海晶", "李文娟", "李应龙"]
+            },
+            "五年1班": {
+                "星期一": ["赵润杰", "段爱芳", "孙小艳", "李旭会", "高瑞雪", "班/安", "赵润杰", "孙小艳"],
+                "星期二": ["孙小艳", "赵润杰", "段爱芳", "高瑞雪", "赵颖甜", "王艳", "孙小艳", "李旭会"],
+                "星期三": ["赵润杰", "孙小艳", "刘王毅", "王丽清", "王文娟", "李旭会", "社团", ""],
+                "星期四": ["孙小艳", "赵润杰", "孙小艳", "赵颖甜", "王文娟", "段爱芳", "李旭会", "赵润杰"],
+                "星期五": ["赵润杰", "段爱芳", "孙小艳", "王海霞", "王文娟", "刘王毅", "赵润杰", "孙小艳"]
+            },
+            "五年2班": {
+                "星期一": ["张杰慧", "赵润杰", "赵颖甜", "高瑞雪", "刘王毅", "班/安", "张杰慧", "李旭会"],
+                "星期二": ["赵润杰", "段爱芳", "王文娟", "李旭会", "王丽清", "张杰慧", "赵润杰", "张杰慧"],
+                "星期三": ["张杰慧", "赵润杰", "王海霞", "赵颖甜", "段爱芳", "高瑞雪", "社团", ""],
+                "星期四": ["赵润杰", "张杰慧", "王文娟", "刘王毅", "段爱芳", "李旭会", "赵润杰", "张杰慧"],
+                "星期五": ["张杰慧", "赵润杰", "张杰慧", "王文娟", "段爱芳", "王艳", "李旭会", "赵润杰"]
+            },
+            "五年3班": {
+                "星期一": ["尤丽丽", "王佳丽", "王丽清", "段爱芳", "李培燕", "班/安", "李旭会", "王佳丽"],
+                "星期二": ["王佳丽", "尤丽丽", "赵颖甜", "王文娟", "王艳", "王海霞", "王佳丽", "尤丽丽"],
+                "星期三": ["尤丽丽", "段爱芳", "王佳丽", "高瑞雪", "李旭会", "李培燕", "社团", ""],
+                "星期四": ["段爱芳", "尤丽丽", "王佳丽", "高瑞雪", "李旭会", "王文娟", "王佳丽", "尤丽丽"],
+                "星期五": ["王佳丽", "尤丽丽", "赵颖甜", "段爱芳", "王佳丽", "王文娟", "尤丽丽", "李旭会"]
+            },
+            "五年4班": {
+                "星期一": ["王冰", "尤丽丽", "李旭会", "王文娟", "段爱芳", "班/安", "王冰", "尤丽丽"],
+                "星期二": ["尤丽丽", "王冰", "李培燕", "段爱芳", "王文娟", "高瑞雪", "李旭会", "王冰"],
+                "星期三": ["王冰", "尤丽丽", "段爱芳", "李旭会", "王艳", "王冰", "社团", ""],
+                "星期四": ["尤丽丽", "王冰", "李培燕", "王文娟", "高瑞雪", "赵颖甜", "尤丽丽", "王海霞"],
+                "星期五": ["尤丽丽", "王冰", "段爱芳", "王丽清", "赵颖甜", "李旭会", "王冰", "尤丽丽"]
+            },
+            "六年1班": {
+                "星期一": ["张亚琴", "马雪华", "王艳", "杨丽芳", "杜俊鑫", "班/安", "马雪华", "张亚琴"],
+                "星期二": ["马雪华", "张亚琴", "马雪华", "赵颖甜", "段慧敏", "郝丽宏", "马雪华", "杨丽芳"],
+                "星期三": ["张亚琴", "马雪华", "段慧敏", "李培燕", "郝丽宏", "马雪华", "社团", ""],
+                "星期四": ["马雪华", "张亚琴", "赵颖甜", "杜俊鑫", "李培燕", "郝丽宏", "杨丽芳", "张亚琴"],
+                "星期五": ["张亚琴", "郝丽宏", "马雪华", "段慧敏", "杜俊鑫", "杨丽芳", "张亚琴", "马雪华"]
+            },
+            "六年2班": {
+                "星期一": ["郝国珍", "袁美仙", "段慧敏", "郝国珍", "郝丽宏", "班/安", "杨丽芳", "郝国珍"],
+                "星期二": ["袁美仙", "郝国珍", "杨丽芳", "段慧敏", "郝丽宏", "杜俊鑫", "袁美仙", "郝国珍"],
+                "星期三": ["郝国珍", "袁美仙", "李培燕", "杨丽芳", "杜俊鑫", "赵颖甜", "社团", ""],
+                "星期四": ["袁美仙", "郝国珍", "郝丽宏", "形体", "赵颖甜", "李培燕", "袁美仙", "郝国珍"],
+                "星期五": ["郝国珍", "袁美仙", "段慧敏", "郝丽宏", "王艳", "杜俊鑫", "杨丽芳", "袁美仙"]
+            },
+            "六年3班": {
+                "星期一": ["袁美仙", "尹宏艳", "李培燕", "郝丽宏", "段慧敏", "班/安", "尹宏艳", "杨丽芳"],
+                "星期二": ["尹宏艳", "袁美仙", "郝丽宏", "杨丽芳", "李培燕", "赵颖甜", "尹宏艳", "袁美仙"],
+                "星期三": ["袁美仙", "尹宏艳", "杜俊鑫", "郝丽宏", "杨丽芳", "段慧敏", "社团", ""],
+                "星期四": ["尹宏艳", "袁美仙", "形体", "王艳", "郝丽宏", "杜俊鑫", "尹宏艳", "袁美仙"],
+                "星期五": ["袁美仙", "尹宏艳", "杜俊鑫", "赵颖甜", "尹宏艳", "段慧敏", "袁美仙", "杨丽芳"]
+            },
+            "六年4班": {
+                "星期一": ["程彩芳", "张亚琴", "郝丽宏", "赵颖甜", "杨丽芳", "班/安", "张亚琴", "程彩芳"],
+                "星期二": ["张亚琴", "程彩芳", "杜俊鑫", "郝丽宏", "形体", "李培燕", "杨丽芳", "程彩芳"],
+                "星期三": ["程彩芳", "张亚琴", "杨丽芳", "程彩芳", "段慧敏", "杜俊鑫", "社团", ""],
+                "星期四": ["张亚琴", "程彩芳", "王艳", "郝丽宏", "杜俊鑫", "段慧敏", "张亚琴", "杨丽芳"],
+                "星期五": ["程彩芳", "张亚琴", "郝丽宏", "李培燕", "段慧敏", "赵颖甜", "程彩芳", "张亚琴"]
+            }
+        }
+    </script>
+
+    <script>
+        // 从JSON元素中提取课程表数据
+        const courseData = JSON.parse(document.getElementById('courseData').textContent);
+        
+        // 从课程表数据中提取班级-教师映射
+        const classTeacherMap = {};
+        
+        // 遍历课程表数据，提取每个班级的教师列表
+        for (const className in courseData) {
+            const classSchedule = courseData[className];
+            const teachers = new Set();
+            
+            // 遍历每一天的课程
+            for (const day in classSchedule) {
+                const daySchedule = classSchedule[day];
+                
+                // 遍历每节课
+                daySchedule.forEach(teacher => {
+                    // 只添加实际教师姓名，排除特殊课程
+                    if (teacher && teacher !== '班/安' && teacher !== '社团' && 
+                        teacher !== '形体' && teacher !== '阅读' && teacher !== '数学' && 
+                        teacher !== '') {
+                        teachers.add(teacher);
+                    }
+                });
+            }
+            
+            // 将Set转换为数组并排序
+            classTeacherMap[className] = Array.from(teachers).sort();
+        }
+
+        // 获取所有教师名单
+        const allTeachers = [...new Set(
+            Object.values(classTeacherMap).flat()
+        )].sort();
+
+        // 存储所有课程数据
+        let allCourses = [];
+
+        // 月份天数数组（非闰年）
+        const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+        
+        // 星期数组 - 只保留星期一到星期五
+        const weekdays = ['星期一', '星期二', '星期三', '星期四', '星期五'];
+        
+        // 班级数组 - 一年级到六年级，每个年级4个班
+        const grades = ['一年', '二年', '三年', '四年', '五年', '六年'];
+        const classOptions = [];
+        grades.forEach(grade => {
+            for (let i = 1; i <= 4; i++) {
+                classOptions.push(`${grade}${i}班`);
+            }
+        });
+        
+        // 节次数组 - 修正为与Excel表格完全一致的节次
+        const periods = ['1', '2', '3', '4', '5', '6', '托1', '托2'];
+        
+        // 节次到索引的映射（用于从courseData中获取教师）
+        const periodToIndexMap = {
+            '1': 0,
+            '2': 1,
+            '3': 2,
+            '4': 3,
+            '5': 4,
+            '6': 5,
+            '托1': 6,
+            '托2': 7
+        };
+        
+        // DOM元素
+        const dateSlider = document.getElementById('dateSlider');
+        const dateDisplay = document.getElementById('dateDisplay');
+        const searchInput = document.getElementById('searchInput');
+        const classFilter = document.getElementById('classFilter');
+        const teacherFilter = document.getElementById('teacherFilter');
+        const addCourseBtn = document.getElementById('addCourseBtn');
+        const assignAllBtn = document.getElementById('assignAllBtn');
+        const syncNowBtn = document.getElementById('syncNowBtn');
+        const exportBtn = document.getElementById('exportBtn');
+        const clearDataBtn = document.getElementById('clearDataBtn');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+        const courseTable = document.getElementById('courseTable');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const autoSyncToggle = document.getElementById('autoSyncToggle');
+        const syncFrequency = document.getElementById('syncFrequency');
+        const wifiSyncToggle = document.getElementById('wifiSyncToggle');
+        const conflictResolution = document.getElementById('conflictResolution');
+        const syncServerUrl = document.getElementById('syncServerUrl');
+        const schoolCode = document.getElementById('schoolCode');
+        const deviceName = document.getElementById('deviceName');
+
+        // 数据存储键名
+        const STORAGE_KEY = 'junyu_course_assignments';
+        const SETTINGS_KEY = 'junyu_system_settings';
+        const SYNC_HISTORY_KEY = 'junyu_sync_history';
+
+        // 同步状态
+        let isSyncing = false;
+        let lastSyncTime = new Date();
+        let syncInterval = null;
+
+        // 教师赞美语句数组
+        const teacherPraises = [
+            "{teacher}老师，您真是教师中的楷模！",
+            "感谢{teacher}老师接受派课，您的专业精神值得我们学习！",
+            "{teacher}老师，您的辛勤付出将照亮学生的未来！",
+            "派课成功！感谢{teacher}老师的敬业精神！",
+            "{teacher}老师，您的专业素养和责任心令人敬佩！",
+            "感谢{teacher}老师为学校教学工作的贡献！",
+            "{teacher}老师，您的教学经验丰富，是年轻教师的榜样！",
+            "感谢{teacher}老师的无私奉献，学生们将受益匪浅！",
+            "{teacher}老师，您的教学热情感染着每一位学生！",
+            "派课任务顺利完成，感谢{teacher}老师的配合与支持！",
+            "{teacher}老师，您严谨的教学态度令人钦佩！",
+            "感谢{teacher}老师接受派课，您的课堂总是充满活力！",
+            "{teacher}老师，您的专业知识和教学能力令人赞叹！",
+            "感谢{teacher}老师，您的付出是学校发展的坚实基石！",
+            "{teacher}老师，您的教学风格深受学生喜爱！"
+        ];
+
+        // 初始化函数
+        function init() {
+            initClassFilter();
+            initTeacherFilter();
+            loadCoursesFromStorage();
+            loadSettings();
+            updateDateDisplay();
+            setupEventListeners();
+            updateStatistics();
+            startAutoSync();
+        }
+        
+        // 从本地存储加载课程数据
+        function loadCoursesFromStorage() {
+            const savedCourses = localStorage.getItem(STORAGE_KEY);
+            if (savedCourses) {
+                try {
+                    const parsedCourses = JSON.parse(savedCourses);
+                    if (Array.isArray(parsedCourses)) {
+                        // 清空现有数据
+                        allCourses = [];
+                        
+                        // 移除空消息行（如果存在）
+                        const emptyMessage = document.querySelector('.empty-message-row');
+                        if (emptyMessage) {
+                            emptyMessage.remove();
+                        }
+                        
+                        // 重新创建所有课程行
+                        parsedCourses.forEach(courseData => {
+                            createCourseRowFromData(courseData);
+                        });
+                        
+                        console.log(`已从本地存储加载 ${parsedCourses.length} 条课程数据`);
+                    }
+                } catch (e) {
+                    console.error('加载课程数据失败:', e);
+                }
+            }
+        }
+        
+        // 加载系统设置
+        function loadSettings() {
+            const savedSettings = localStorage.getItem(SETTINGS_KEY);
+            if (savedSettings) {
+                try {
+                    const settings = JSON.parse(savedSettings);
+                    if (settings.autoSync !== undefined) {
+                        autoSyncToggle.checked = settings.autoSync;
+                    }
+                    if (settings.syncFrequency !== undefined) {
+                        syncFrequency.value = settings.syncFrequency;
+                    }
+                    if (settings.wifiSync !== undefined) {
+                        wifiSyncToggle.checked = settings.wifiSync;
+                    }
+                    if (settings.conflictResolution !== undefined) {
+                        conflictResolution.value = settings.conflictResolution;
+                    }
+                    if (settings.syncServerUrl !== undefined) {
+                        syncServerUrl.value = settings.syncServerUrl;
+                    }
+                    if (settings.schoolCode !== undefined) {
+                        schoolCode.value = settings.schoolCode;
+                    }
+                    if (settings.deviceName !== undefined) {
+                        deviceName.value = settings.deviceName;
+                    }
+                } catch (e) {
+                    console.error('加载设置失败:', e);
+                }
+            }
+        }
+        
+        // 保存系统设置
+        function saveSettings() {
+            const settings = {
+                autoSync: autoSyncToggle.checked,
+                syncFrequency: syncFrequency.value,
+                wifiSync: wifiSyncToggle.checked,
+                conflictResolution: conflictResolution.value,
+                syncServerUrl: syncServerUrl.value,
+                schoolCode: schoolCode.value,
+                deviceName: deviceName.value
+            };
+            localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+            showNotification('设置已保存！', 'success');
+            
+            // 重启自动同步
+            startAutoSync();
+        }
+        
+        // 从数据创建课程行
+        function createCourseRowFromData(courseData) {
+            const tbody = document.querySelector('#courseTable tbody');
+            
+            // 创建新行
+            const newRow = document.createElement('tr');
+            
+            // 添加单元格
+            const dateCell = document.createElement('td');
+            const dateSelect = document.createElement('select');
+            dateSelect.className = 'date-selector';
+            
+            // 添加全年日期选项
+            const dateOptions = generateDateOptions();
+            dateOptions.forEach(dateString => {
+                const option = document.createElement('option');
+                option.value = dateString;
+                option.textContent = dateString;
+                if (dateString === courseData.date) {
+                    option.selected = true;
+                }
+                dateSelect.appendChild(option);
+            });
+            
+            dateCell.appendChild(dateSelect);
+            
+            const dayCell = document.createElement('td');
+            const weekdaySelect = document.createElement('select');
+            weekdaySelect.className = 'weekday-selector';
+            
+            // 添加星期选项 - 只显示星期一到星期五
+            weekdays.forEach((weekday, index) => {
+                const option = document.createElement('option');
+                option.value = weekday;
+                option.textContent = weekday;
+                if (weekday === courseData.weekday) {
+                    option.selected = true;
+                }
+                weekdaySelect.appendChild(option);
+            });
+            
+            dayCell.appendChild(weekdaySelect);
+            
+            const classCell = document.createElement('td');
+            const classSelect = document.createElement('select');
+            classSelect.className = 'class-selector';
+            
+            // 添加班级选项
+            classOptions.forEach(className => {
+                const option = document.createElement('option');
+                option.value = className;
+                option.textContent = className;
+                if (className === courseData.class) {
+                    option.selected = true;
+                }
+                classSelect.appendChild(option);
+            });
+            
+            classCell.appendChild(classSelect);
+            
+            const periodCell = document.createElement('td');
+            const periodSelect = document.createElement('select');
+            periodSelect.className = 'period-selector';
+            
+            // 添加节次选项
+            periods.forEach(period => {
+                const option = document.createElement('option');
+                option.value = period;
+                option.textContent = period;
+                if (period === courseData.period) {
+                    option.selected = true;
+                }
+                periodSelect.appendChild(option);
+            });
+            
+            periodCell.appendChild(periodSelect);
+            
+            // 任课教师单元格
+            const teacherCell = document.createElement('td');
+            const teacherSelect = document.createElement('select');
+            teacherSelect.className = 'teacher-selector';
+            teacherCell.appendChild(teacherSelect);
+            
+            const assignTeacherCell = document.createElement('td');
+            const assignTeacherSelect = document.createElement('select');
+            assignTeacherSelect.className = 'assign-teacher-selector';
+            assignTeacherCell.appendChild(assignTeacherSelect);
+            
+            const statusCell = document.createElement('td');
+            const statusSelect = document.createElement('select');
+            statusSelect.className = 'status-selector';
+            
+            // 添加派课情况选项
+            const statusOptions = ['待完成', '已完成', '进行中', '已取消'];
+            statusOptions.forEach(status => {
+                const option = document.createElement('option');
+                option.value = status;
+                option.textContent = status;
+                if (status === courseData.status) {
+                    option.selected = true;
+                }
+                statusSelect.appendChild(option);
+            });
+            
+            updateStatusClass(statusSelect);
+            statusCell.appendChild(statusSelect);
+            
+            const actionCell = document.createElement('td');
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'btn btn-secondary';
+            deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+            deleteBtn.addEventListener('click', function() {
+                if (confirm('确定要删除这条课程记录吗？')) {
+                    // 从数据存储中移除
+                    const index = allCourses.findIndex(course => course.row === newRow);
+                    if (index !== -1) {
+                        allCourses.splice(index, 1);
+                        saveCoursesToStorage();
+                    }
+                    // 从DOM中移除
+                    newRow.remove();
+                    
+                    // 更新统计数据
+                    updateStatistics();
+                    updateAllTeacherWorkloads();
+                    
+                    // 如果没有课程了，显示空消息
+                    if (document.querySelectorAll('#courseTable tbody tr:not(.empty-message-row)').length === 0) {
+                        const tbody = document.querySelector('#courseTable tbody');
+                        const emptyRow = document.createElement('tr');
+                        emptyRow.className = 'empty-message-row';
+                        emptyRow.innerHTML = '<td colspan="8" class="empty-message">暂无派课数据，请点击"添加课程"按钮添加新课程</td>';
+                        tbody.appendChild(emptyRow);
+                    }
+                }
+            });
+            actionCell.appendChild(deleteBtn);
+            
+            // 将单元格添加到行
+            newRow.appendChild(dateCell);
+            newRow.appendChild(dayCell);
+            newRow.appendChild(classCell);
+            newRow.appendChild(periodCell);
+            newRow.appendChild(teacherCell);
+            newRow.appendChild(assignTeacherCell);
+            newRow.appendChild(statusCell);
+            newRow.appendChild(actionCell);
+            
+            // 将行添加到表格
+            tbody.appendChild(newRow);
+            
+            // 初始化任课教师下拉列表
+            updateTeacherSelector(newRow);
+            
+            // 初始化派课教师下拉列表
+            updateAssignTeacherSelector(newRow);
+            
+            // 设置派课教师
+            if (courseData.assignTeacher) {
+                assignTeacherSelect.value = courseData.assignTeacher;
+            }
+            
+            // 设置行事件监听器
+            setupRowEventListeners(newRow);
+            
+            // 添加课程到数据存储
+            addCourseToStorage(newRow);
+        }
+        
+        // 保存课程数据到本地存储
+        function saveCoursesToStorage() {
+            try {
+                // 准备要保存的数据（排除row引用）
+                const coursesToSave = allCourses.map(course => ({
+                    date: course.date,
+                    weekday: course.weekday,
+                    class: course.class,
+                    period: course.period,
+                    teacher: course.teacher,
+                    assignTeacher: course.assignTeacher,
+                    status: course.status,
+                    isSpecialCourse: course.isSpecialCourse
+                }));
+                
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(coursesToSave));
+                console.log(`已保存 ${coursesToSave.length} 条课程数据到本地存储`);
+            } catch (e) {
+                console.error('保存课程数据失败:', e);
+            }
+        }
+        
+        // 清空所有数据
+        function clearAllData() {
+            if (confirm('确定要清空所有派课数据吗？此操作不可恢复！')) {
+                // 清空数据数组
+                allCourses = [];
+                
+                // 清空本地存储
+                localStorage.removeItem(STORAGE_KEY);
+                
+                // 清空表格
+                const tbody = document.querySelector('#courseTable tbody');
+                tbody.innerHTML = '';
+                
+                // 添加空消息行
+                const emptyRow = document.createElement('tr');
+                emptyRow.className = 'empty-message-row';
+                emptyRow.innerHTML = '<td colspan="8" class="empty-message">暂无派课数据，请点击"添加课程"按钮添加新课程</td>';
+                tbody.appendChild(emptyRow);
+                
+                // 更新统计数据
+                updateStatistics();
+                
+                showNotification('所有派课数据已清空！', 'success');
+            }
+        }
+        
+        // 初始化班级筛选器选项
+        function initClassFilter() {
+            classOptions.forEach(className => {
+                const option = document.createElement('option');
+                option.value = className;
+                option.textContent = className;
+                classFilter.appendChild(option);
+            });
+        }
+        
+        // 初始化教师筛选器选项
+        function initTeacherFilter() {
+            allTeachers.forEach(teacher => {
+                const option = document.createElement('option');
+                option.value = teacher;
+                option.textContent = teacher;
+                teacherFilter.appendChild(option);
+            });
+        }
+        
+        // 设置事件监听器
+        function setupEventListeners() {
+            dateSlider.addEventListener('input', updateDateDisplay);
+            searchInput.addEventListener('input', handleSearch);
+            classFilter.addEventListener('input', applyFilters);
+            teacherFilter.addEventListener('input', applyFilters);
+            addCourseBtn.addEventListener('click', addCourse);
+            assignAllBtn.addEventListener('click', assignAllCourses);
+            syncNowBtn.addEventListener('click', syncNow);
+            exportBtn.addEventListener('click', exportData);
+            clearDataBtn.addEventListener('click', clearAllData);
+            settingsBtn.addEventListener('click', () => switchTab('sync-settings'));
+            saveSettingsBtn.addEventListener('click', saveSettings);
+            
+            // 标签页切换
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    switchTab(tabId);
+                });
+            });
+        }
+        
+        // 切换标签页
+        function switchTab(tabId) {
+            // 移除所有active类
+            tabs.forEach(tab => tab.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // 添加active类到当前标签
+            document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+        
+        // 计算教师当天工作量 - 修复版本，只统计课程表中的固定课程
+        function calculateTeacherWorkload(teacherName, selectedWeekday) {
+            if (!teacherName) return 0;
+            
+            let workload = 0;
+            
+            // 只统计该教师在该星期的固定课程
+            if (selectedWeekday) {
+                // 遍历所有班级的课程表，统计该教师在该星期的固定课程
+                Object.keys(courseData).forEach(className => {
+                    const classSchedule = courseData[className][selectedWeekday];
+                    if (classSchedule) {
+                        // 遍历所有节次（包括托1和托2）
+                        classSchedule.forEach((teacher, periodIndex) => {
+                            // 只统计实际教师，不统计特殊课程
+                            if (teacher === teacherName && 
+                                teacher !== '班/安' && 
+                                teacher !== '社团' && 
+                                teacher !== '形体' && 
+                                teacher !== '阅读' && 
+                                teacher !== '数学') {
+                                workload++;
+                            }
+                        });
+                    }
+                });
+            }
+            
+            return workload;
+        }
+        
+        // 计算派课教师排名 - 只统计状态为"已完成"的派课
+        function calculateTeacherAssignmentRanking() {
+            const assignmentCounts = {};
+            
+            // 初始化所有教师的计数
+            allTeachers.forEach(teacher => {
+                assignmentCounts[teacher] = 0;
+            });
+            
+            // 统计每位教师的派课次数 - 只统计状态为"已完成"的派课
+            allCourses.forEach(course => {
+                if (course.assignTeacher && course.assignTeacher !== '' && 
+                    course.status === '已完成') {
+                    assignmentCounts[course.assignTeacher]++;
+                }
+            });
+            
+            // 按派课次数降序排列
+            const sortedTeachers = Object.entries(assignmentCounts)
+                .filter(([_, count]) => count > 0)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+            
+            return sortedTeachers;
+        }
+        
+        // 检查教师是否有时间冲突
+        function checkTeacherConflict(teacher, currentRow) {
+            if (!teacher) return false;
+            
+            const row = currentRow.closest('tr');
+            const dateCell = row.cells[0];
+            const weekdayCell = row.cells[1];
+            const periodCell = row.cells[3];
+            const classCell = row.cells[2];
+            
+            const selectedDate = dateCell.querySelector('.date-selector').value;
+            const selectedWeekday = weekdayCell.querySelector('.weekday-selector').value;
+            const selectedPeriod = periodCell.querySelector('.period-selector').value;
+            const selectedClass = classCell.querySelector('.class-selector').value;
+            
+            // 检查所有课程中是否有冲突
+            for (const course of allCourses) {
+                // 跳过当前行本身
+                if (course.row === row) continue;
+                
+                // 检查日期、星期、节次是否相同
+                if (course.date === selectedDate && 
+                    course.weekday === selectedWeekday && 
+                    course.period === selectedPeriod) {
+                    
+                    // 检查教师是否相同
+                    if (course.teacher === teacher || course.assignTeacher === teacher) {
+                        return true; // 有冲突
+                    }
+                }
+            }
+            
+            // 检查固定课程中是否有冲突
+            // 遍历所有班级的课程表，检查该教师在同一节次是否有其他班级的固定课程
+            for (const className in courseData) {
+                // 跳过当前班级
+                if (className === selectedClass) continue;
+                
+                const classSchedule = courseData[className][selectedWeekday];
+                if (classSchedule) {
+                    // 获取节次索引
+                    const periodIndex = periodToIndexMap[selectedPeriod];
+                    if (periodIndex >= 0 && classSchedule[periodIndex] === teacher) {
+                        return true; // 该教师在同一节次有其他班级的固定课程
+                    }
+                }
+            }
+            
+            return false; // 无冲突
+        }
+        
+        // 更新教师工作量显示 - 移除"今日已安排"提示
+        function updateTeacherWorkloadDisplay(row) {
+            const assignTeacherCell = row.cells[5];
+            const assignTeacherSelect = assignTeacherCell.querySelector('.assign-teacher-selector');
+            const selectedTeacher = assignTeacherSelect.value;
+            
+            // 移除旧的冲突警告
+            const oldWarning = assignTeacherCell.querySelector('.conflict-warning');
+            if (oldWarning) {
+                oldWarning.remove();
+            }
+            
+            if (selectedTeacher) {
+                // 检查是否有冲突
+                if (checkTeacherConflict(selectedTeacher, row)) {
+                    const conflictWarning = document.createElement('div');
+                    conflictWarning.className = 'conflict-warning';
+                    conflictWarning.textContent = '该教师在同一节次有其他班级的课程！';
+                    assignTeacherCell.appendChild(conflictWarning);
+                }
+            }
+        }
+        
+        // 更新派课教师下拉列表，显示课时量
+        function updateAssignTeacherSelector(row) {
+            const classCell = row.cells[2];
+            const classSelect = classCell.querySelector('.class-selector');
+            const selectedClass = classSelect.value;
+            
+            const weekdayCell = row.cells[1];
+            const weekdaySelect = weekdayCell.querySelector('.weekday-selector');
+            const selectedWeekday = weekdaySelect.value;
+            
+            const assignTeacherCell = row.cells[5];
+            const assignTeacherSelect = assignTeacherCell.querySelector('.assign-teacher-selector');
+            
+            // 保存当前选择的派课教师
+            const currentTeacher = assignTeacherSelect.value;
+            
+            // 获取该班级的教师列表
+            const classTeachers = classTeacherMap[selectedClass] || [];
+            
+            // 清空现有的选项
+            assignTeacherSelect.innerHTML = '';
+            
+            // 添加该班级的教师选项，排除有冲突的教师，并显示课时量
+            let availableTeachers = 0;
+            classTeachers.forEach(teacher => {
+                // 检查教师是否有时间冲突
+                if (!checkTeacherConflict(teacher, row)) {
+                    const assignTeacherOption = document.createElement('option');
+                    assignTeacherOption.value = teacher;
+                    
+                    // 计算该教师当天的课时量（只统计固定课程）
+                    const workload = calculateTeacherWorkload(teacher, selectedWeekday);
+                    
+                    assignTeacherOption.textContent = `${teacher} (${workload}节)`;
+                    assignTeacherSelect.appendChild(assignTeacherOption);
+                    availableTeachers++;
+                }
+            });
+            
+            // 如果没有可用的教师，添加提示信息
+            if (availableTeachers === 0) {
+                const noTeacherOption = document.createElement('option');
+                noTeacherOption.value = '';
+                noTeacherOption.textContent = '无可用教师（时间冲突）';
+                noTeacherOption.disabled = true;
+                assignTeacherSelect.appendChild(noTeacherOption);
+            }
+            
+            // 尝试恢复之前选择的教师
+            if (currentTeacher && assignTeacherSelect.querySelector(`option[value="${currentTeacher}"]`)) {
+                assignTeacherSelect.value = currentTeacher;
+            } else if (availableTeachers > 0) {
+                // 如果没有之前的选择，选择第一个可用教师
+                assignTeacherSelect.selectedIndex = 0;
+            }
+            
+            // 更新工作量显示
+            updateTeacherWorkloadDisplay(row);
+        }
+        
+        // 更新所有行的教师工作量显示
+        function updateAllTeacherWorkloads() {
+            const rows = document.querySelectorAll('#courseTable tbody tr:not(.empty-message-row)');
+            rows.forEach(row => {
+                updateTeacherWorkloadDisplay(row);
+            });
+        }
+        
+        // 更新统计数据
+        function updateStatistics() {
+            // 派课教师排名
+            const teacherAssignmentRanking = document.getElementById('teacherAssignmentRanking');
+            teacherAssignmentRanking.innerHTML = '';
+            
+            // 计算派课教师排名
+            const sortedTeachers = calculateTeacherAssignmentRanking();
+            
+            if (sortedTeachers.length === 0) {
+                teacherAssignmentRanking.innerHTML = '<div style="text-align:center;color:#777;">暂无数据</div>';
+            } else {
+                sortedTeachers.forEach(([teacher, count]) => {
+                    const item = document.createElement('div');
+                    item.style.marginBottom = '5px';
+                    item.innerHTML = `<span>${teacher}</span><span style="float:right">${count}次</span>`;
+                    teacherAssignmentRanking.appendChild(item);
+                });
+            }
+            
+            // 更新今日课程数
+            const todayCourses = document.getElementById('todayCourses');
+            const currentDayOfYear = parseInt(dateSlider.value);
+            const currentDate = dayOfYearToDate(currentDayOfYear);
+            const currentDateString = `${monthNames[currentDate.month]}${currentDate.day}日`;
+            const currentWeekdayIndex = calculateWeekday(currentDayOfYear);
+            const currentWeekday = weekdays[currentWeekdayIndex];
+            
+            // 计算所有教师当天的工作量（只统计固定课程）
+            const teacherWorkloads = {};
+            allTeachers.forEach(teacher => {
+                teacherWorkloads[teacher] = calculateTeacherWorkload(teacher, currentWeekday);
+            });
+            
+            const totalTodayCourses = Object.values(teacherWorkloads).reduce((sum, workload) => sum + workload, 0);
+            todayCourses.textContent = totalTodayCourses;
+            
+            // 更新待派课程数
+            const pendingAssignments = document.getElementById('pendingAssignments');
+            const pendingCount = allCourses.filter(course => 
+                course.status === '待完成' && course.date === currentDateString
+            ).length;
+            pendingAssignments.textContent = pendingCount;
+        }
+        
+        // 将一年中的第几天转换为月份和日期
+        function dayOfYearToDate(dayOfYear) {
+            let month = 0;
+            let day = dayOfYear;
+            
+            for (let i = 0; i < monthDays.length; i++) {
+                if (day <= monthDays[i]) {
+                    month = i;
+                    break;
+                }
+                day -= monthDays[i];
+            }
+            
+            return {
+                month: month,
+                day: day
+            };
+        }
+        
+        // 根据日期计算星期几（假设1月1日是星期一）
+        function calculateWeekday(dayOfYear) {
+            return (dayOfYear - 1) % 5; // 只计算星期一到星期五
+        }
+        
+        // 初始化日期显示
+        function updateDateDisplay() {
+            const dayOfYear = parseInt(dateSlider.value);
+            const date = dayOfYearToDate(dayOfYear);
+            const weekdayIndex = calculateWeekday(dayOfYear);
+            
+            dateDisplay.textContent = `${monthNames[date.month]}${date.day}日 ${weekdays[weekdayIndex]}`;
+            
+            // 根据日期筛选表格
+            filterTableByDate(dayOfYear);
+            
+            // 更新统计数据
+            updateStatistics();
+            
+            // 更新所有行的教师工作量显示
+            updateAllTeacherWorkloads();
+            
+            // 更新所有派课教师下拉列表的课时量显示
+            updateAllAssignTeacherSelectors();
+        }
+        
+        // 更新所有派课教师下拉列表的课时量显示
+        function updateAllAssignTeacherSelectors() {
+            const rows = document.querySelectorAll('#courseTable tbody tr:not(.empty-message-row)');
+            rows.forEach(row => {
+                updateAssignTeacherSelector(row);
+            });
+        }
+        
+        // 根据日期筛选表格
+        function filterTableByDate(dayOfYear) {
+            const date = dayOfYearToDate(dayOfYear);
+            const targetDateString = `${monthNames[date.month]}${date.day}日`;
+            
+            const rows = document.querySelectorAll('#courseTable tbody tr:not(.empty-message-row)');
+            
+            if (rows.length === 0) return;
+            
+            let hasVisibleRows = false;
+            
+            rows.forEach(row => {
+                const dateCell = row.cells[0];
+                const dateSelect = dateCell.querySelector('.date-selector');
+                // 检查日期是否匹配
+                if (dateSelect && dateSelect.value === targetDateString) {
+                    row.style.display = '';
+                    hasVisibleRows = true;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // 如果没有匹配的行，显示空消息
+            const emptyMessage = document.querySelector('.empty-message-row');
+            if (emptyMessage) {
+                if (hasVisibleRows) {
+                    emptyMessage.style.display = 'none';
+                } else {
+                    emptyMessage.style.display = '';
+                }
+            }
+        }
+        
+        // 生成全年日期选项
+        function generateDateOptions() {
+            const options = [];
+            for (let dayOfYear = 1; dayOfYear <= 365; dayOfYear++) {
+                const date = dayOfYearToDate(dayOfYear);
+                const dateString = `${monthNames[date.month]}${date.day}日`;
+                options.push(dateString);
+            }
+            return options;
+        }
+        
+        // 更新任课教师下拉列表
+        function updateTeacherSelector(row) {
+            const classCell = row.cells[2];
+            const weekdayCell = row.cells[1];
+            const periodCell = row.cells[3];
+            const teacherCell = row.cells[4];
+            
+            const classSelect = classCell.querySelector('.class-selector');
+            const weekdaySelect = weekdayCell.querySelector('.weekday-selector');
+            const periodSelect = periodCell.querySelector('.period-selector');
+            const teacherSelect = teacherCell.querySelector('.teacher-selector');
+            
+            const selectedClass = classSelect.value;
+            const selectedWeekday = weekdaySelect.value;
+            const selectedPeriod = periodSelect.value;
+            
+            // 获取节次索引
+            const periodIndex = periodToIndexMap[selectedPeriod];
+            
+            // 清空现有的选项
+            teacherSelect.innerHTML = '';
+            
+            // 从课程数据中查找任课教师
+            let defaultTeacher = '';
+            let isSpecialCourse = false;
+            if (courseData[selectedClass] && courseData[selectedClass][selectedWeekday] && periodIndex >= 0) {
+                const teacher = courseData[selectedClass][selectedWeekday][periodIndex];
+                
+                // 检查是否是特殊课程类型
+                if (teacher === '班/安' || teacher === '社团' || teacher === '形体' || teacher === '阅读' || teacher === '数学') {
+                    isSpecialCourse = true;
+                    defaultTeacher = teacher;
+                } else if (teacher && teacher !== '') {
+                    defaultTeacher = teacher;
+                }
+            }
+            
+            // 获取该班级的所有教师
+            const classTeachers = classTeacherMap[selectedClass] || [];
+            
+            // 如果是特殊课程，添加特殊选项
+            if (isSpecialCourse) {
+                const specialOption = document.createElement('option');
+                specialOption.value = defaultTeacher;
+                specialOption.textContent = defaultTeacher;
+                specialOption.selected = true;
+                specialOption.disabled = true;
+                teacherSelect.appendChild(specialOption);
+                teacherSelect.disabled = true;
+                teacherSelect.style.backgroundColor = '#f8f9fa';
+                
+                // 添加特殊课程指示器
+                let indicator = teacherCell.querySelector('.special-course-indicator');
+                if (!indicator) {
+                    indicator = document.createElement('div');
+                    indicator.className = 'special-course-indicator';
+                    teacherCell.appendChild(indicator);
+                }
+                indicator.textContent = '固定课程，无需派课';
+            } else {
+                teacherSelect.disabled = false;
+                teacherSelect.style.backgroundColor = '';
+                
+                // 移除特殊课程指示器
+                const indicator = teacherCell.querySelector('.special-course-indicator');
+                if (indicator) {
+                    indicator.remove();
+                }
+                
+                // 添加教师选项
+                classTeachers.forEach(teacher => {
+                    const option = document.createElement('option');
+                    option.value = teacher;
+                    option.textContent = teacher;
+                    // 如果是默认教师，设置为选中
+                    if (teacher === defaultTeacher) {
+                        option.selected = true;
+                    }
+                    teacherSelect.appendChild(option);
+                });
+                
+                // 如果没有找到默认教师且班级有教师，选择第一个
+                if (!defaultTeacher && classTeachers.length > 0) {
+                    teacherSelect.selectedIndex = 0;
+                }
+            }
+        }
+        
+        // 根据节次自动更新任课教师
+        function updateTeacherByPeriod(row) {
+            const classCell = row.cells[2];
+            const weekdayCell = row.cells[1];
+            const periodCell = row.cells[3];
+            const teacherCell = row.cells[4];
+            
+            const classSelect = classCell.querySelector('.class-selector');
+            const weekdaySelect = weekdayCell.querySelector('.weekday-selector');
+            const periodSelect = periodCell.querySelector('.period-selector');
+            const teacherSelect = teacherCell.querySelector('.teacher-selector');
+            
+            const selectedClass = classSelect.value;
+            const selectedWeekday = weekdaySelect.value;
+            const selectedPeriod = periodSelect.value;
+            
+            // 根据节次和班级获取教师
+            const teacher = getTeacherByPeriodAndClass(selectedPeriod, selectedClass, selectedWeekday);
+            
+            // 设置任课教师下拉列表的值
+            if (teacher) {
+                teacherSelect.value = teacher;
+                
+                // 如果是特殊课程，禁用下拉列表
+                if (teacher === '班/安' || teacher === '社团' || teacher === '形体' || teacher === '阅读' || teacher === '数学') {
+                    teacherSelect.disabled = true;
+                    teacherSelect.style.backgroundColor = '#f8f9fa';
+                    
+                    // 添加特殊课程指示器
+                    let indicator = teacherCell.querySelector('.special-course-indicator');
+                    if (!indicator) {
+                        indicator = document.createElement('div');
+                        indicator.className = 'special-course-indicator';
+                        teacherCell.appendChild(indicator);
+                    }
+                    indicator.textContent = '固定课程，无需派课';
+                } else {
+                    teacherSelect.disabled = false;
+                    teacherSelect.style.backgroundColor = '';
+                    
+                    // 移除特殊课程指示器
+                    const indicator = teacherCell.querySelector('.special-course-indicator');
+                    if (indicator) {
+                        indicator.remove();
+                    }
+                }
+            }
+        }
+        
+        // 根据班级和节次获取教师姓名的函数
+        function getTeacherByPeriodAndClass(period, className, weekday) {
+            // 获取节次索引
+            const periodIndex = periodToIndexMap[period];
+            
+            // 尝试从courseData中获取教师信息
+            if (courseData[className] && courseData[className][weekday] && periodIndex >= 0) {
+                const teacher = courseData[className][weekday][periodIndex];
+                // 返回教师信息，包括特殊课程
+                if (teacher && teacher !== '') {
+                    return teacher;
+                }
+            }
+            
+            // 如果没有找到特定教师，返回空字符串
+            return '';
+        }
+        
+        // 添加课程到数据存储
+        function addCourseToStorage(row) {
+            const dateCell = row.cells[0];
+            const weekdayCell = row.cells[1];
+            const classCell = row.cells[2];
+            const periodCell = row.cells[3];
+            const teacherCell = row.cells[4];
+            const assignTeacherCell = row.cells[5];
+            const statusCell = row.cells[6];
+            
+            const dateSelect = dateCell.querySelector('.date-selector');
+            const weekdaySelect = weekdayCell.querySelector('.weekday-selector');
+            const classSelect = classCell.querySelector('.class-selector');
+            const periodSelect = periodCell.querySelector('.period-selector');
+            const teacherSelect = teacherCell.querySelector('.teacher-selector');
+            const assignTeacherSelect = assignTeacherCell.querySelector('.assign-teacher-selector');
+            const statusSelect = statusCell.querySelector('.status-selector');
+            
+            const teacherSelectValue = teacherSelect.value;
+            const isSpecialCourse = teacherSelect.disabled;
+            
+            const course = {
+                row: row,
+                date: dateSelect.value,
+                weekday: weekdaySelect.value,
+                class: classSelect.value,
+                period: periodSelect.value,
+                teacher: teacherSelectValue,
+                assignTeacher: assignTeacherSelect.value,
+                status: statusSelect.value,
+                isSpecialCourse: isSpecialCourse
+            };
+            
+            // 检查是否已存在相同的课程
+            const existingIndex = allCourses.findIndex(c => 
+                c.row === row
+            );
+            
+            if (existingIndex !== -1) {
+                // 更新现有课程
+                allCourses[existingIndex] = course;
+            } else {
+                // 添加新课程
+                allCourses.push(course);
+            }
+            
+            // 保存到本地存储
+            saveCoursesToStorage();
+            
+            // 更新统计数据和工作量显示
+            updateStatistics();
+            updateAllTeacherWorkloads();
+        }
+        
+        // 为行设置事件监听器
+        function setupRowEventListeners(row) {
+            const classSelect = row.cells[2].querySelector('.class-selector');
+            const weekdaySelect = row.cells[1].querySelector('.weekday-selector');
+            const periodSelect = row.cells[3].querySelector('.period-selector');
+            const dateSelect = row.cells[0].querySelector('.date-selector');
+            const teacherSelect = row.cells[4].querySelector('.teacher-selector');
+            const assignTeacherSelect = row.cells[5].querySelector('.assign-teacher-selector');
+            const statusSelect = row.cells[6].querySelector('.status-selector');
+            
+            // 存储初始状态
+            const initialStatus = statusSelect.value;
+            
+            // 监听班级选择变化
+            classSelect.addEventListener('change', function() {
+                updateTeacherSelector(row);
+                updateAssignTeacherSelector(row);
+                updateTeacherByPeriod(row);
+                
+                // 立即更新数据存储
+                addCourseToStorage(row);
+            });
+            
+            // 监听星期变化
+            weekdaySelect.addEventListener('change', function() {
+                updateTeacherSelector(row);
+                updateAssignTeacherSelector(row);
+                updateTeacherByPeriod(row);
+                
+                // 立即更新数据存储
+                addCourseToStorage(row);
+            });
+            
+            // 监听节次变化
+            periodSelect.addEventListener('change', function() {
+                updateTeacherSelector(row);
+                updateAssignTeacherSelector(row);
+                updateTeacherByPeriod(row);
+                
+                // 立即更新数据存储
+                addCourseToStorage(row);
+            });
+            
+            // 监听日期变化
+            dateSelect.addEventListener('change', function() {
+                updateAssignTeacherSelector(row);
+                
+                // 立即更新数据存储
+                addCourseToStorage(row);
+            });
+            
+            // 监听任课教师变化
+            teacherSelect.addEventListener('change', function() {
+                // 立即更新数据存储
+                addCourseToStorage(row);
+            });
+            
+            // 监听派课教师变化
+            assignTeacherSelect.addEventListener('change', function() {
+                updateTeacherWorkloadDisplay(row);
+                
+                // 立即更新数据存储
+                addCourseToStorage(row);
+                
+                updateStatistics();
+            });
+            
+            // 监听状态变化
+            statusSelect.addEventListener('change', function() {
+                updateStatusClass(statusSelect);
+                
+                // 立即更新数据存储
+                addCourseToStorage(row);
+                
+                updateStatistics();
+                
+                // 如果状态从非"已完成"变为"已完成"，触发特效
+                if (initialStatus !== '已完成' && this.value === '已完成') {
+                    const assignTeacherSelect = row.cells[5].querySelector('.assign-teacher-selector');
+                    const teacherName = assignTeacherSelect.value;
+                    
+                    if (teacherName) {
+                        showCelebrationEffect(teacherName);
+                    }
+                }
+                
+                // 更新初始状态
+                initialStatus = this.value;
+            });
+        }
+        
+        // 更新状态样式
+        function updateStatusClass(select) {
+            select.className = 'status-selector';
+            select.classList.add(`status-${select.value}`);
+        }
+        
+        // 搜索功能
+        function handleSearch() {
+            const searchText = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#courseTable tbody tr:not(.empty-message-row)');
+            
+            if (rows.length === 0) return;
+            
+            let hasVisibleRows = false;
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(searchText)) {
+                    row.style.display = '';
+                    hasVisibleRows = true;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // 如果没有匹配的行，显示空消息
+            const emptyMessage = document.querySelector('.empty-message-row');
+            if (emptyMessage) {
+                if (hasVisibleRows) {
+                    emptyMessage.style.display = 'none';
+                } else {
+                    emptyMessage.style.display = '';
+                }
+            }
+        }
+        
+        // 筛选功能
+        function applyFilters() {
+            const classValue = classFilter.value;
+            const teacherValue = teacherFilter.value;
+            const currentDayOfYear = parseInt(dateSlider.value);
+            const currentDate = dayOfYearToDate(currentDayOfYear);
+            const currentDateString = `${monthNames[currentDate.month]}${currentDate.day}日`;
+            
+            const rows = document.querySelectorAll('#courseTable tbody tr:not(.empty-message-row)');
+            
+            if (rows.length === 0) return;
+            
+            let hasVisibleRows = false;
+            
+            rows.forEach(row => {
+                const dateCell = row.cells[0];
+                const dateSelect = dateCell.querySelector('.date-selector');
+                const classCell = row.cells[2];
+                const classSelect = classCell.querySelector('.class-selector');
+                const teacherCell = row.cells[4];
+                const teacherSelect = teacherCell.querySelector('.teacher-selector');
+                
+                const dateMatch = dateSelect && dateSelect.value === currentDateString;
+                const classMatch = !classValue || (classSelect && classSelect.value === classValue);
+                const teacherMatch = !teacherValue || (teacherSelect && teacherSelect.value === teacherValue);
+                
+                if (dateMatch && classMatch && teacherMatch) {
+                    row.style.display = '';
+                    hasVisibleRows = true;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // 如果没有匹配的行，显示空消息
+            const emptyMessage = document.querySelector('.empty-message-row');
+            if (emptyMessage) {
+                if (hasVisibleRows) {
+                    emptyMessage.style.display = 'none';
+                } else {
+                    emptyMessage.style.display = '';
+                }
+            }
+        }
+        
+        // 添加课程按钮
+        function addCourse() {
+            // 移除空消息行（如果存在）
+            const emptyMessage = document.querySelector('.empty-message-row');
+            if (emptyMessage) {
+                emptyMessage.remove();
+            }
+            
+            // 添加示例数据行
+            const tbody = document.querySelector('#courseTable tbody');
+            
+            // 获取当前选择的日期
+            const currentDayOfYear = parseInt(dateSlider.value);
+            const currentDate = dayOfYearToDate(currentDayOfYear);
+            const currentDateString = `${monthNames[currentDate.month]}${currentDate.day}日`;
+            const currentWeekdayIndex = calculateWeekday(currentDayOfYear);
+            
+            // 创建新行
+            const newRow = document.createElement('tr');
+            
+            // 添加单元格
+            const dateCell = document.createElement('td');
+            const dateSelect = document.createElement('select');
+            dateSelect.className = 'date-selector';
+            
+            // 添加全年日期选项
+            const dateOptions = generateDateOptions();
+            dateOptions.forEach(dateString => {
+                const option = document.createElement('option');
+                option.value = dateString;
+                option.textContent = dateString;
+                if (dateString === currentDateString) {
+                    option.selected = true;
+                }
+                dateSelect.appendChild(option);
+            });
+            
+            dateCell.appendChild(dateSelect);
+            
+            const dayCell = document.createElement('td');
+            const weekdaySelect = document.createElement('select');
+            weekdaySelect.className = 'weekday-selector';
+            
+            // 添加星期选项 - 只显示星期一到星期五
+            weekdays.forEach((weekday, index) => {
+                const option = document.createElement('option');
+                option.value = weekday;
+                option.textContent = weekday;
+                if (index === currentWeekdayIndex) {
+                    option.selected = true;
+                }
+                weekdaySelect.appendChild(option);
+            });
+            
+            dayCell.appendChild(weekdaySelect);
+            
+            const classCell = document.createElement('td');
+            const classSelect = document.createElement('select');
+            classSelect.className = 'class-selector';
+            
+            // 添加班级选项
+            classOptions.forEach(className => {
+                const option = document.createElement('option');
+                option.value = className;
+                option.textContent = className;
+                // 默认选择一年级1班
+                if (className === '一年1班') {
+                    option.selected = true;
+                }
+                classSelect.appendChild(option);
+            });
+            
+            classCell.appendChild(classSelect);
+            
+            const periodCell = document.createElement('td');
+            const periodSelect = document.createElement('select');
+            periodSelect.className = 'period-selector';
+            
+            // 添加节次选项
+            periods.forEach(period => {
+                const option = document.createElement('option');
+                option.value = period;
+                option.textContent = period;
+                // 默认选择第一节
+                if (period === '1') {
+                    option.selected = true;
+                }
+                periodSelect.appendChild(option);
+            });
+            
+            periodCell.appendChild(periodSelect);
+            
+            // 任课教师单元格
+            const teacherCell = document.createElement('td');
+            const teacherSelect = document.createElement('select');
+            teacherSelect.className = 'teacher-selector';
+            teacherCell.appendChild(teacherSelect);
+            
+            const assignTeacherCell = document.createElement('td');
+            const assignTeacherSelect = document.createElement('select');
+            assignTeacherSelect.className = 'assign-teacher-selector';
+            assignTeacherCell.appendChild(assignTeacherSelect);
+            
+            const statusCell = document.createElement('td');
+            const statusSelect = document.createElement('select');
+            statusSelect.className = 'status-selector';
+            
+            // 添加派课情况选项
+            const statusOptions = ['待完成', '已完成', '进行中', '已取消'];
+            statusOptions.forEach(status => {
+                const option = document.createElement('option');
+                option.value = status;
+                option.textContent = status;
+                // 默认选择待完成
+                if (status === '待完成') {
+                    option.selected = true;
+                }
+                statusSelect.appendChild(option);
+            });
+            
+            updateStatusClass(statusSelect);
+            statusCell.appendChild(statusSelect);
+            
+            const actionCell = document.createElement('td');
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'btn btn-secondary';
+            deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+            deleteBtn.addEventListener('click', function() {
+                if (confirm('确定要删除这条课程记录吗？')) {
+                    // 从数据存储中移除
+                    const index = allCourses.findIndex(course => course.row === newRow);
+                    if (index !== -1) {
+                        allCourses.splice(index, 1);
+                        saveCoursesToStorage();
+                    }
+                    // 从DOM中移除
+                    newRow.remove();
+                    
+                    // 更新统计数据
+                    updateStatistics();
+                    updateAllTeacherWorkloads();
+                    
+                    // 如果没有课程了，显示空消息
+                    if (document.querySelectorAll('#courseTable tbody tr:not(.empty-message-row)').length === 0) {
+                        const tbody = document.querySelector('#courseTable tbody');
+                        const emptyRow = document.createElement('tr');
+                        emptyRow.className = 'empty-message-row';
+                        emptyRow.innerHTML = '<td colspan="8" class="empty-message">暂无派课数据，请点击"添加课程"按钮添加新课程</td>';
+                        tbody.appendChild(emptyRow);
+                    }
+                }
+            });
+            actionCell.appendChild(deleteBtn);
+            
+            // 将单元格添加到行
+            newRow.appendChild(dateCell);
+            newRow.appendChild(dayCell);
+            newRow.appendChild(classCell);
+            newRow.appendChild(periodCell);
+            newRow.appendChild(teacherCell);
+            newRow.appendChild(assignTeacherCell);
+            newRow.appendChild(statusCell);
+            newRow.appendChild(actionCell);
+            
+            // 将行添加到表格
+            tbody.appendChild(newRow);
+            
+            // 初始化任课教师下拉列表
+            updateTeacherSelector(newRow);
+            
+            // 初始化派课教师下拉列表
+            updateAssignTeacherSelector(newRow);
+            
+            // 初始化任课教师（根据节次自动设置）
+            updateTeacherByPeriod(newRow);
+            
+            // 添加课程到数据存储
+            addCourseToStorage(newRow);
+            
+            // 设置行事件监听器
+            setupRowEventListeners(newRow);
+        }
+        
+        // 批量派课功能
+        function assignAllCourses() {
+            const unassignedCourses = allCourses.filter(course => 
+                course.status === '待完成' || course.assignTeacher === ''
+            );
+            
+            if (unassignedCourses.length === 0) {
+                alert('没有待派课的课程！');
+                return;
+            }
+            
+            if (confirm(`确定要为 ${unassignedCourses.length} 个待派课课程自动分配教师吗？`)) {
+                unassignedCourses.forEach(course => {
+                    const assignTeacherSelect = course.row.cells[5].querySelector('.assign-teacher-selector');
+                    const statusSelect = course.row.cells[6].querySelector('.status-selector');
+                    
+                    // 如果有可用的教师，选择第一个
+                    if (assignTeacherSelect.options.length > 0 && !assignTeacherSelect.options[0].disabled) {
+                        assignTeacherSelect.selectedIndex = 0;
+                        course.assignTeacher = assignTeacherSelect.value;
+                        
+                        // 更新状态为进行中
+                        statusSelect.value = '进行中';
+                        updateStatusClass(statusSelect);
+                        course.status = '进行中';
+                    }
+                });
+                
+                // 保存到本地存储
+                saveCoursesToStorage();
+                
+                // 更新统计数据和工作量显示
+                updateStatistics();
+                updateAllTeacherWorkloads();
+                
+                alert(`已为 ${unassignedCourses.length} 个课程分配教师！`);
+            }
+        }
+        
+        // 导出数据按钮
+        function exportData() {
+            // 在实际应用中，这里会生成Excel或CSV文件
+            showNotification('数据导出功能已触发！在实际应用中，这里会生成Excel或CSV文件供下载。', 'success');
+        }
+        
+        // 同步功能
+        function syncNow() {
+            if (isSyncing) {
+                showNotification('同步正在进行中，请稍候...', 'warning');
+                return;
+            }
+            
+            isSyncing = true;
+            updateSyncStatus('syncing');
+            
+            // 模拟同步过程
+            setTimeout(() => {
+                lastSyncTime = new Date();
+                updateLastSyncTime();
+                updateSyncStatus('synced');
+                isSyncing = false;
+                
+                // 记录同步历史
+                recordSyncHistory('手动同步完成', 'success');
+                
+                // 显示成功消息
+                showNotification('数据同步成功！', 'success');
+            }, 2000);
+        }
+        
+        // 开始自动同步
+        function startAutoSync() {
+            // 清除现有定时器
+            if (syncInterval) {
+                clearInterval(syncInterval);
+            }
+            
+            // 检查是否启用自动同步
+            if (autoSyncToggle.checked) {
+                const frequency = parseInt(syncFrequency.value) * 60000;
+                
+                // 设置定时同步
+                syncInterval = setInterval(() => {
+                    if (!isSyncing) {
+                        syncNow();
+                        recordSyncHistory('自动同步完成', 'success');
+                    }
+                }, frequency);
+            }
+        }
+        
+        // 更新最后同步时间显示
+        function updateLastSyncTime() {
+            const lastSyncTimeElement = document.getElementById('lastSyncTime');
+            const now = new Date();
+            const diffMs = now - lastSyncTime;
+            const diffMins = Math.floor(diffMs / 60000);
+            
+            if (diffMins < 1) {
+                lastSyncTimeElement.textContent = '刚刚';
+            } else if (diffMins < 60) {
+                lastSyncTimeElement.textContent = `${diffMins}分钟前`;
+            } else {
+                const diffHours = Math.floor(diffMins / 60);
+                lastSyncTimeElement.textContent = `${diffHours}小时前`;
+            }
+        }
+        
+        // 更新同步状态指示器
+        function updateSyncStatus(status) {
+            const indicators = document.querySelectorAll('.sync-indicator');
+            indicators.forEach(indicator => {
+                indicator.classList.remove('synced', 'syncing');
+                
+                if (status === 'synced') {
+                    indicator.classList.add('synced');
+                } else if (status === 'syncing') {
+                    indicator.classList.add('syncing');
+                }
+            });
+            
+            const statusTexts = document.querySelectorAll('.sync-status span');
+            statusTexts.forEach(text => {
+                if (status === 'synced') {
+                    text.textContent = '已同步';
+                } else if (status === 'syncing') {
+                    text.textContent = '同步中';
+                } else {
+                    text.textContent = '未同步';
+                }
+            });
+        }
+        
+        // 记录同步历史
+        function recordSyncHistory(message, status) {
+            const history = JSON.parse(localStorage.getItem(SYNC_HISTORY_KEY) || '[]');
+            
+            history.unshift({
+                time: new Date().toLocaleString(),
+                message: message,
+                status: status
+            });
+            
+            // 只保留最近的20条记录
+            if (history.length > 20) {
+                history.pop();
+            }
+            
+            localStorage.setItem(SYNC_HISTORY_KEY, JSON.stringify(history));
+        }
+        
+        // 显示通知
+        function showNotification(message, type) {
+            // 创建通知元素
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: bold;
+                z-index: 10000;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                transition: all 0.3s;
+            `;
+            
+            if (type === 'success') {
+                notification.style.background = '#2ecc71';
+            } else if (type === 'error') {
+                notification.style.background = '#e74c3c';
+            } else if (type === 'warning') {
+                notification.style.background = '#f39c12';
+            } else {
+                notification.style.background = '#3498db';
+            }
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // 3秒后移除通知
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+        
+        // 庆祝特效功能
+        function showCelebrationEffect(teacherName) {
+            // 创建庆祝覆盖层
+            const overlay = document.createElement('div');
+            overlay.className = 'celebration-overlay';
+            
+            // 创建庆祝内容
+            const content = document.createElement('div');
+            content.className = 'celebration-content';
+            
+            // 添加庆祝图标
+            const icon = document.createElement('i');
+            icon.className = 'fas fa-trophy celebration-icon';
+            content.appendChild(icon);
+            
+            // 添加庆祝标题
+            const title = document.createElement('h2');
+            title.className = 'celebration-title';
+            title.textContent = '派课完成！';
+            content.appendChild(title);
+            
+            // 添加庆祝消息
+            const message = document.createElement('p');
+            message.className = 'celebration-message';
+            
+            // 随机选择一条赞美语句
+            const randomIndex = Math.floor(Math.random() * teacherPraises.length);
+            let praiseMessage = teacherPraises[randomIndex];
+            
+            // 如果有教师姓名，替换占位符
+            if (teacherName) {
+                praiseMessage = praiseMessage.replace(/{teacher}/g, `<span class="teacher-name">${teacherName}</span>`);
+            } else {
+                praiseMessage = praiseMessage.replace(/{teacher}/g, '各位老师');
+            }
+            
+            message.innerHTML = praiseMessage;
+            content.appendChild(message);
+            
+            // 添加确定按钮
+            const button = document.createElement('button');
+            button.className = 'btn btn-success';
+            button.innerHTML = '<i class="fas fa-check"></i> 确定';
+            button.addEventListener('click', function() {
+                document.body.removeChild(overlay);
+                stopConfetti();
+            });
+            content.appendChild(button);
+            
+            overlay.appendChild(content);
+            document.body.appendChild(overlay);
+            
+            // 启动五彩纸屑效果
+            const canvas = document.getElementById('confettiCanvas');
+            startConfetti(canvas);
+            
+            // 5秒后自动关闭
+            setTimeout(() => {
+                if (document.body.contains(overlay)) {
+                    document.body.removeChild(overlay);
+                    stopConfetti();
+                }
+            }, 5000);
+        }
+        
+        // 五彩纸屑效果
+        let confettiParticles = [];
+        let confettiAnimationId;
+        
+        function startConfetti(canvas) {
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            // 创建纸屑粒子
+            const colors = ['#f94144', '#f3722c', '#f8961e', '#f9c74f', '#90be6d', '#43aa8b', '#577590'];
+            
+            for (let i = 0; i < 150; i++) {
+                confettiParticles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    size: Math.random() * 10 + 5,
+                    speed: Math.random() * 3 + 2,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    rotation: Math.random() * 360,
+                    rotationSpeed: Math.random() * 10 - 5
+                });
+            }
+            
+            // 动画循环
+            function animateConfetti() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                confettiParticles.forEach((particle, index) => {
+                    ctx.save();
+                    ctx.translate(particle.x, particle.y);
+                    ctx.rotate(particle.rotation * Math.PI / 180);
+                    
+                    ctx.fillStyle = particle.color;
+                    ctx.fillRect(-particle.size / 2, -particle.size / 2, particle.size, particle.size);
+                    
+                    ctx.restore();
+                    
+                    // 更新粒子位置
+                    particle.y += particle.speed;
+                    particle.x += Math.sin(particle.y * 0.01) * 2;
+                    particle.rotation += particle.rotationSpeed;
+                    
+                    // 如果粒子超出屏幕，重置到顶部
+                    if (particle.y > canvas.height) {
+                        particle.y = -particle.size;
+                        particle.x = Math.random() * canvas.width;
+                    }
+                });
+                
+                confettiAnimationId = requestAnimationFrame(animateConfetti);
+            }
+            
+            animateConfetti();
+        }
+        
+        function stopConfetti() {
+            if (confettiAnimationId) {
+                cancelAnimationFrame(confettiAnimationId);
+                confettiAnimationId = null;
+            }
+            
+            // 清空canvas
+            const canvas = document.getElementById('confettiCanvas');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+            
+            confettiParticles = [];
+        }
+        
+        // 初始化应用
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
